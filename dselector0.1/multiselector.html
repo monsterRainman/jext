@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="jquery-2.1.1.js">
+</script>
+<title>Insert title here</title>
+<style type="text/css">
+.mselector{width:90%;height:90%;text-align:center;padding:1%;text-align:center;border:1px solid #999999;background:#DEDEDE;}
+.lselector , .rselector , .midselector{float:left;}
+.lselector , .rselector {width:38%;height:96%;margin-top:10px;}
+.lselector {margin-left:2%;}
+.midselector {width:20%;height:96%;background:#DEDEDE;text-align:center;align:center;z-index:9999;margin-top:10px;}
+.lselector_content , .rselector_content{
+width:85%;
+height:98%;
+background:#D1EEEE;
+opacity:0.8;
+padding:2%;
+text-align:center;
+border: 1px solid #999;
+border-radius:5px;
+overflow-y:auto;
+overflow-x:hidden;
+}
+.rselector_content{float:right;}
+.midselector_toolbar{margin-top:30%}
+.lselector_content ul, .rselector_content ul , .midselector_toolbar ul{
+width:100%;
+padding: 8px 0px;
+list-style:none;
+margin:0px;
+}
+.lselector_content ul:hover, .rselector_content ul:hover , .midselector_toolbar ul:hover{width:100%;background:#1E90FF;}
+</style>
+
+<script type="text/javascript">
+(function($){
+	$.fn.DSelector = function(){
+		var method = arguments[0];
+		var config = $.extend($.fn.DSelector.defaults,arguments[1]);
+		if(method == undefined){method=$.fn.DSelector.defaults.method;}
+		console.log('$.fn.DSelector');
+		$.fn.DSelector.Init();
+	},
+	$.fn.DSelector.defaults={
+		uuid:'#mselector',
+		method:'init',
+		url:'',
+		postData:undefined,
+		localData:[],
+		li:'<li/>',
+		ul:'<ul/>',
+		span:'<span/>',
+		inputHidden:'<input type=\'hidden\'/>',
+		textField:'name',
+		valueField:'id',
+		lcontent:'.lselector_content',
+		rcontent:'.rselector_content',
+		ms:'midselector',
+		msbar:'midselector_toolbar',
+		lmap:[],
+		rmap:[]
+	},
+	$.fn.DSelector.Init=function(config){
+		config = $.fn.DSelector.defaults;
+		config.lmap =config.lmap= new Array();
+		$.fn.DSelector.InitLocalRows(config.localData);
+		$.fn.DSelector.DelegateDbl();
+	},
+	$.fn.DSelector.DelegateDbl=function(config){
+		var defaults = this.defaults;
+		$(defaults.uuid).find(defaults.lcontent+','+defaults.rcontent).find("ul").on('dblclick',$.fn.DSelector.ItemClickHandle);
+	},
+	$.fn.DSelector.ItemClickHandle = function(){
+		var _parentCs = $(this).parent().attr('class');
+		var _default = $.fn.DSelector.defaults;
+		if(_parentCs === _default.lcontent.substring(1,_default.lcontent.length)){
+			var _selectedKey = $(this).find('input[type="hidden"]').val();
+			$.fn.DSelector.MoveItem(_default.rcontent,$(this).clone());
+		}else{
+			$.fn.DSelector.MoveItem(_default.lcontent,$(this).clone());
+		}
+	},
+	$.fn.DSelector.GetValue = function(){
+		console.log('get selected value !!'+$(this));
+		console.log($(this));
+		var _default = this.defaults;
+		var _array = new Array();
+		$(_default.uuid).find(_default.rcontent).find("input").each(function(i,n){
+			console.log('get selected value !!'+$(this).val());
+			_array.push($(this).val());
+		});
+		return _array;
+	},
+    $.fn.DSelector.MoveItem = function(target,element){
+    	var _default = this.defaults;
+		$(_default.uuid).find(target).append(element);
+	},
+    $.fn.DSelector.InitAsyncRows = function(){
+		
+	},
+	$.fn.DSelector.InitLocalRows = function(rows){
+		if(rows!=undefined){
+			for(var key in rows){
+				$.fn.DSelector.appendLeftRow(rows[key]);
+			}
+		}else{
+			alert('没有加载数据!请确认.');
+		}
+	},
+	$.fn.DSelector.appendLeftRow = function(rowData){
+		var _default = this.defaults;
+		$.fn.DSelector.appendRow(_default.lcontent,rowData);
+	},
+	$.fn.DSelector.appendRightRow = function(rowData){
+		var _default = this.defaults;
+		$.fn.DSelector.appendRow(_default.rcontent,rowData);
+	},
+	$.fn.DSelector.appendRow=function(target,rowData){
+		var _default = this.defaults;
+		var _node  = $(_default.ul);
+		    _node.append(_default.li);
+		var _text = $(_default.span).html(eval("rowData."+(_default.textField)));
+		var _value = $(_default.inputHidden).val(eval("rowData."+(_default.valueField)));
+		_node.find("li").append(_text).append(_value);
+		$(_default.uuid).find(target).append(_node);
+	},
+	$.fn.DSelector.appendRemoveRow = function(){
+		
+	}
+})(jQuery)
+$(function(){
+	 console.log('AAAAAAAAAAAA');
+	$('#mselector').DSelector('Init',{name:'DSelector',localData:[{id:'2',name:'测试!DSF'},{id:'4',name:'测试!DDDSF'}]});
+	 //$('#mselector').DSelector.GetValue();
+});
+
+</script>
+</head>
+<body>
+<div>
+<div>
+ <ul><li><input type="button" value="GetValue" onclick="$.fn.DSelector.GetValue();"/></li></ul>
+</div>
+  <div style="width:600px;height:500px;">
+  <div id="mselector" class="mselector">
+       <div class="lselector">
+            <div class="lselector_content">
+            </div>
+       </div>
+       <div class="midselector">
+       <div class="midselector_toolbar">
+       <ul><li><span> --> </span></li></ul>
+       <ul><li><span> <-- </span></li></ul>
+       <ul><li><span> ==  </span></li></ul>
+       <ul><li><span> ==  </span></li></ul>
+       </div>
+       </div>
+       <div class="rselector">
+        <div class="rselector_content"></div>
+       </div>
+  </div>
+  </div>
+ </div>
+</body>
+</html>
