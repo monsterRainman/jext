@@ -1,0 +1,27 @@
+.mselector{width:90%;height:90%;text-align:center;padding:1%;text-align:center;border:1px solid #999999;background:#DEDEDE;}
+.lselector , .rselector , .midselector{float:left;}
+.lselector , .rselector {width:38%;height:96%;margin-top:10px;}
+.lselector {margin-left:2%;}
+.midselector {width:20%;height:96%;background:#DEDEDE;text-align:center;align:center;z-index:9999;margin-top:10px;}
+.lselector_content , .rselector_content{
+width:85%;
+height:98%;
+background:#D1EEEE;
+opacity:0.8;
+padding:2%;
+text-align:center;
+border: 1px solid #999;
+border-radius:5px;
+overflow-y:auto;
+overflow-x:hidden;
+}
+.rselector_content{float:right;}
+.midselector_toolbar{margin-top:30%}
+.lselector_content ul, .rselector_content ul , .midselector_toolbar ul{
+width:100%;
+padding: 8px 0px;
+list-style:none;
+margin:0px;
+}
+.lselector_content ul:hover, .rselector_content ul:hover , .midselector_toolbar ul:hover{width:100%;background:#1E90FF;}
+.itemclick {width:100%;background:#1E90FF;}
