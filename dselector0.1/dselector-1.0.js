@@ -4,7 +4,7 @@
 		var config = $.extend($.fn.DSelector.defaults,arguments[1]);
 		if(method == undefined){method=$.fn.DSelector.defaults.method;}
 		config.uuid= '#'+$(this).attr('id');
-		console.log(this);
+		//console.log(this);
 		$.fn.DSelector.InitSelectorHTML();
 		$.fn.DSelector.Init();
 		$.fn.DSelector.SetValue();
@@ -55,7 +55,7 @@
 		larray:[],
 		rarray:[],
 		onClick:undefined,
-		onDblClick:undefined
+		msgWarn:false
 	},
 	$.fn.DSelector.Init=function(config){
 		config = $.fn.DSelector.defaults;
@@ -63,7 +63,7 @@
 		if(config.url !=undefined && config.url!=''){
 			this.InitAsyncRows();
 		}else{
-			$.fn.DSelector.InitLocalRows(config.localData);
+			this.InitLocalRows(config.localData);
 		}
 		$.fn.DSelector.DelegateMidBarEvents();
 		$.fn.DSelector.DelegateClickEvents();
@@ -74,7 +74,7 @@
 	},
 	$.fn.DSelector.MidBarHandle = function(){
 		var _type = $(this).find('li:eq(0)').attr('id');
-		console.log("user click events type :"+_type);
+		//console.log("user click events type :"+_type);
 		eval('$.fn.DSelector.'+_type+"();");
 	},
     $.fn.DSelector.InitAsyncRows = function(){
@@ -88,7 +88,7 @@
 		$.fn.DSelector.FilterRightItemData(_default.localData,_default.selectData);
 		// Clear Html 
 		$(_default.uuid).find(_default.lcontent+" , "+_default.rcontent).html("");
-		console.log('leftarray'+_default.larray.length);
+		//console.log('leftarray'+_default.larray.length);
 		$.fn.DSelector.appendLeftRow(_default.larray);
 		$.fn.DSelector.appendRightRow(_default.rarray);
 	},
@@ -104,7 +104,6 @@
 			var row = rows[key];
 			var flag =false;
 			for(var selectKey in valueRows){
-				console.log('selected value'+valueRows[selectKey]+(typeof valueRows[selectKey])+'-'+eval("row."+_default.valueField)+(typeof eval("row."+_default.valueField))+(select === eval("row."+_default.valueField)));
 				var select  = valueRows[selectKey];
 				if((select+"") === eval("row."+_default.valueField)){
 					_rightArray.push(row);
@@ -116,8 +115,7 @@
 			}
 			
 		}
-		console.log('FilterRightItemData leftarray '+_leftArray.length);
-		console.log('FilterRightItemData rightarray '+_rightArray.length);
+		
 		_default.larray = _leftArray;
 		_default.rarray = _rightArray;
 	},
@@ -138,14 +136,15 @@
 		var _default = this.defaults;
 		var _node  = $(_default.ul);
 		    _node.append(_default.li);
+			console.log('text'+eval("rowData."+(_default.textField)));
 		var _text = $(_default.span).html(eval("rowData."+(_default.textField)));
 		var _value = $(_default.inputHidden).val(eval("rowData."+(_default.valueField)));
 		_node.find("li").append(_text).append(_value);
-		console.log('uuid'+_default.uuid);
+		
 		$(_default.uuid).find(target).append(_node);
 	},
 	$.fn.DSelector.GetRemoteData = function(){
-		console.log('URL:'+this.defaults.url);
+		//console.log('URL:'+this.defaults.url);
 		var url = this.defaults.url;
 		var data  = '';
 		$.ajax({
@@ -155,7 +154,7 @@
 			dataType : 'text',
 			success : function(r) {
 				data = eval('('+r+')');
-				console.log(data.length);
+				//console.log(data.length);
 			}
 		});
 		return data;
@@ -169,20 +168,32 @@
 	$.fn.DSelector.Left2Right = function(){
 		var _default  = $.fn.DSelector.defaults;
 		var _selector = $(_default.uuid);
-		_selector.find(_default.lcontent).find(".itemclick").each(function(i,n){
+		var selectedRows = _selector.find(_default.lcontent).find(".itemclick");
+		if(selectedRows.length==0){
+			this.Alert('Please select at least one row!');
+			return ;
+		}
+	    selectedRows.each(function(i,n){
 			 _selector.find(_default.rcontent).append($(n).clone().removeClass('itemclick').on('click',$.fn.DSelector.ItemClickHandle));
-			 $(n).remove();
+            $(this).remove();
 		});
 	},
     $.fn.DSelector.Right2Left = function(){
 		var _default  = $.fn.DSelector.defaults;
 		var _selector = $(_default.uuid);
-		_selector.find(_default.rcontent).find(".itemclick").each(function(i,n){
+		var selectedRows = _selector.find(_default.rcontent).find(".itemclick");
+		if(selectedRows.length==0){
+			this.Alert('Please select at least one row!');
+			return ;
+		}
+		selectedRows.each(function(i,n){
 			 _selector.find(_default.lcontent).append($(n).clone().removeClass('itemclick').on('click',$.fn.DSelector.ItemClickHandle));
-			 $(n).remove();
+			 $(this).remove();
 		});
 	},
     $.fn.DSelector.LeftAllSelected = function(){
+		//选择所有左侧数据
+		//直接复制左侧内容数据到右侧,不进行遍历
 		var _default  = $.fn.DSelector.defaults;
 		var _selector = $(_default.uuid);
 		var _content = _selector.find(_default.lcontent);
@@ -197,7 +208,12 @@
 	},
 	$.fn.DSelector.ItemClickHandle = function(){
 		var _default  = this.defaults;
-		$(this).addClass('itemclick');
+		var _clazz = $(this).attr('class');
+		if(_clazz=='itemclick'){
+			$(this).removeClass('itemclick');
+		}else{
+			$(this).addClass('itemclick');
+		}
 	}
 	$.fn.DSelector.ItemDBlClickHandle = function(){
 		var _parentCs = $(this).parent().attr('class');
@@ -205,9 +221,11 @@
 		if(_parentCs === _default.lcontent.substring(1,_default.lcontent.length)){
 			var _selectedKey = $(this).find('input[type="hidden"]').val();
 			$.fn.DSelector.MoveItem(_default.rcontent,$(this).clone());
+			//$(this).remove();
 		}else{
 			$.fn.DSelector.MoveItem(_default.lcontent,$(this).clone());
 		}
+		$(this).remove();
 	},
 	$.fn.DSelector.GetValue = function(){
 		//console.log($(this));
@@ -219,12 +237,10 @@
 		return _array;
 	},
 	$.fn.DSelector.SetValue = function(){
-		console.log('get selected value !!'+this);
-		console.log('get selected value !!');
 		var _default = this.defaults;
 		var _array = new Array();
 		$(_default.uuid).find(_default.rcontent).find("input").each(function(i,n){
-			console.log('get selected value !!'+$(this).val());
+			//console.log('get selected value !!'+$(this).val());
 			_array.push($(this).val());
 		});
 		return _array;
@@ -233,7 +249,13 @@
     	var _default = this.defaults;
 		$(_default.uuid).find(target).append(element);
 	},
-    
+    $.fn.DSelector.Alert = function(msg){
+		if(this.defaults.msgWarn){
+			alert(msg);
+		}else{
+			//throw msg;
+		}
+	},
 	
 	$.fn.DSelector.RemoveRow = function(){
 		

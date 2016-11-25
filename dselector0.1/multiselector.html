@@ -46,7 +46,17 @@ $(function(){
 	 //$('#mselector').DSelector.GetValue();
 	// $('#mselector').DSelector('Init',{url:'mselector.json'});
 	 //$('#dselector').DSelector('Init',{url:'mselector.json'});
-	 $('#test1').DSelector('Init',{url:'mselector.json'});
+	 $('#test1').DSelector('Init',{localData:[{id:1,name:'MultiSelector 1.0A'}
+,{id:2,name:'MultiSelector 1.0B'}
+,{id:3,name:'MultiSelector 1.0C'}
+,{id:4,name:'MultiSelector 1.0D'}
+,{id:5,name:'MultiSelector 1.0E'}
+,{id:6,name:'MultiSelector 1.0F'}
+,{id:7,name:'MultiSelector 1.0G'}
+,{id:8,name:'MultiSelector 1.0H'}
+,{id:9,name:'MultiSelector 1.0I'}
+,{id:10,name:'MultiSelector 1.0J'}
+]});
 });
 function testGetValue(){
 	var _array = $.fn.DSelector.GetValue();
