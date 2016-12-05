@@ -1,0 +1,16 @@
+插件操作简单,界面清新,喜欢的可以直接拿去用. 功能介绍:
+1.支持双击选择
+2.支持选中，然后按钮选择
+3.支持本地数据以及远程数据
+4.允许自定义数据的键值对{key:value},默认对象[{id:1,name:''}]
+5.初始化方法
+  $.fn.DSelector('Init'); 
+  或 本地JSON数据 
+  $.fn.Dselector('Init',{textField:'name',valueField:'id',localData:[]});
+  或 使用远程数据 
+  $.fn.Dselector('Init',{textField:'name',valueField:'id',url:'data.php'});
+6.传值 
+  $.fn.Dselector.SetValue([1,2,3]);
+7.获取结果 
+  $.fn.Dselector.GetSetValue(); 返回数据为数组Array
+8.数据对象结构 {id:1,name:'test'} 
